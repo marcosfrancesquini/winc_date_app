@@ -1,7 +1,8 @@
 'use strict';
 
 const mockData = require('./mockData.js').data;
-const userProfile = {};
+//const userProfile = {};
+let userProfile = {};
 const prompt = require('prompt-sync')();
 const requiredFields = [
    "first_name",
@@ -15,7 +16,10 @@ const requiredFields = [
 ];
 
 while (!requiredFields.every(field => userProfile[field])) {
-
+   console.log("");
+   console.log("----------------------------------------------------------------------------------------------");
+   console.log("Please, type your profile data")
+   console.log("");
    if (!userProfile.first_name) {
       const firstName = prompt("What is your first name? ").trim();
 
@@ -82,6 +86,8 @@ while (!requiredFields.every(field => userProfile[field])) {
       }
    }
 
+   userProfile = { "first_name": "Ryun", "last_name": "Cobb", "age": 22, "gender": "F", "gender_preference": "M", "location": "city", "min_age_interest": 32, "max_age_interest": 82 };
+
    console.log("==============================================================================================");
 
    if (userProfile.first_name && userProfile.last_name) {
@@ -96,7 +102,7 @@ while (!requiredFields.every(field => userProfile[field])) {
    } else {
       console.log("Age must be a number bigger than 17.");
    }
-    console.log("----------------------------------------------------------------------------------------------");
+   console.log("----------------------------------------------------------------------------------------------");
 
    if (userProfile.gender) {
       console.log(`Your gender is: ${userProfile.gender}`);
@@ -129,3 +135,28 @@ while (!requiredFields.every(field => userProfile[field])) {
    }
    console.log("==============================================================================================");
 }
+
+let userMinAgeInterest = userProfile.min_age_interest;
+let userMaxAgeInterest = userProfile.max_age_interest;
+let userGenderPreference = userProfile.gender;
+let userLocation = userProfile.location;
+let countTotal = 0;
+
+for (let i = 0; i < mockData.length; i++) {
+
+   let matchAge = mockData[i].age;
+   let matchGender = mockData[i].gender;
+   let matchLocation = mockData[i].location;
+
+   if (matchAge >= userMinAgeInterest && matchAge <= userMaxAgeInterest) {
+      if (matchGender === userGenderPreference && matchLocation === userLocation) {
+         countTotal++;
+         console.log(`${mockData[i].first_name} ${mockData[i].last_name} - Age: ${matchAge} - Location: ${matchLocation}`);
+
+      }
+
+   }
+
+}
+
+console.log(`Total matches found: ${countTotal}`);
