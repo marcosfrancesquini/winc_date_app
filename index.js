@@ -23,7 +23,7 @@ while (!requiredFields.every(field => userProfile[field])) {
    if (!userProfile.first_name) {
       const firstName = prompt("What is your first name? ").trim();
 
-      if (firstName) {
+      if (/^[A-Za-zÀ-ÿ\s'-]+$/.test(firstName)) {
          userProfile.first_name = firstName;
       }
    }
@@ -31,7 +31,7 @@ while (!requiredFields.every(field => userProfile[field])) {
    if (!userProfile.last_name) {
       const lastName = prompt("What is your last name? ").trim();
 
-      if (lastName) {
+      if ((/^[A-Za-zÀ-ÿ\s'-]+$/.test(lastName))) {
          userProfile.last_name = lastName;
       }
    }
@@ -60,10 +60,10 @@ while (!requiredFields.every(field => userProfile[field])) {
    }
 
    if (!userProfile.location) {
-      const location = prompt("What is your location? ").trim().toUpperCase();;
+      const location = prompt("What is your location? ").trim().toLowerCase();
 
 
-      if (location === "RURAL" || location === "CITY") {
+      if (location === "rural" || location === "city") {
          userProfile.location = location;
       }
    }
@@ -81,12 +81,10 @@ while (!requiredFields.every(field => userProfile[field])) {
       const maxAgeInterestInput = prompt("What is your maximal age interest? ");
       const maxAgeInterest = Number(maxAgeInterestInput);
 
-      if (Number(maxAgeInterest) && maxAgeInterest > 17 && maxAgeInterest >= userProfile.min_age_interest) {
+      if (Number(maxAgeInterest) && maxAgeInterest > 17 && maxAgeInterest > userProfile.min_age_interest) {
          userProfile.max_age_interest = maxAgeInterest;
       }
    }
-
-   userProfile = { "first_name": "Ryun", "last_name": "Cobb", "age": 22, "gender": "F", "gender_preference": "M", "location": "city", "min_age_interest": 32, "max_age_interest": 82 };
 
    console.log("==============================================================================================");
 
@@ -136,27 +134,46 @@ while (!requiredFields.every(field => userProfile[field])) {
    console.log("==============================================================================================");
 }
 
-let userMinAgeInterest = userProfile.min_age_interest;
-let userMaxAgeInterest = userProfile.max_age_interest;
-let userGenderPreference = userProfile.gender;
-let userLocation = userProfile.location;
+
 let countTotal = 0;
-
+console.log("");
+console.log("Here you find the match that suits you:")
+console.log("----------------------------------------------------------------------------------------------");
+console.log("Name                                                Age  Location")
 for (let i = 0; i < mockData.length; i++) {
+   const candidate = mockData[i];
 
-   let matchAge = mockData[i].age;
-   let matchGender = mockData[i].gender;
-   let matchLocation = mockData[i].location;
+   const candidateAgeMatchesUserInterest =
+      candidate.age > userProfile.min_age_interest &&
+      candidate.age <= userProfile.max_age_interest;
 
-   if (matchAge >= userMinAgeInterest && matchAge <= userMaxAgeInterest) {
-      if (matchGender === userGenderPreference && matchLocation === userLocation) {
-         countTotal++;
-         console.log(`${mockData[i].first_name} ${mockData[i].last_name} - Age: ${matchAge} - Location: ${matchLocation}`);
+   const userAgeMatchesCandidateInterest =
+      userProfile.age > candidate.min_age_interest &&
+      userProfile.age <= candidate.max_age_interest;
 
-      }
+   const userLikesCandidateGender =
+      userProfile.gender_preference === candidate.gender;
 
+   const candidateLikesUserGender =
+      candidate.gender_preference === userProfile.gender;
+
+   const sameLocation =
+      userProfile.location === candidate.location;
+
+   if (
+      candidateAgeMatchesUserInterest &&
+      userAgeMatchesCandidateInterest &&
+      userLikesCandidateGender &&
+      candidateLikesUserGender &&
+      sameLocation
+   ) {
+      countTotal++;
+
+      const completeName = `${candidate.first_name} ${candidate.last_name}`.padEnd(50);
+      console.log(`${completeName}  ${candidate.age}   ${candidate.location}`);
    }
-
 }
 
+console.log("==============================================================================================");
 console.log(`Total matches found: ${countTotal}`);
+console.log("==============================================================================================");
